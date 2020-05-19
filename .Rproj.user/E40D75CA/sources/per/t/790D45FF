@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1589869132454.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1672064907",
+    "id" : "790D45FF",
+    "lastKnownWriteTime" : 1589869155,
+    "last_content_update" : 1589869155543,
+    "path" : "C:/Users/azada/OneDrive/@Projects/aemp/covid_map_data/.gitignore",
+    "project_path" : ".gitignore",
+    "properties" : {
+        "cursorPosition" : "7,24",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 9,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "gitignore"
+}
