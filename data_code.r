@@ -2,13 +2,10 @@
 # devtools::install_github("tidyverse/googlesheets4") run once installs
 # install.packages('rlist', 'tidygeocoder', 'tidyverse', 'qdapTools', 'jsonlite', 'rvest')
 
-
 library(googlesheets4)
-# library(here)
 library(dplyr)
 library(janitor)
 library(tidygeocoder)
-# library(rgeocodio)
 library(qdapTools)
 library(jsonlite)
 library(rvest)
@@ -16,7 +13,7 @@ library(rvest)
 lev_of <- function(x) {levels(as.factor(x) )}
 '%!in%' <- function(x,y)!('%in%'(x,y))
 
-## put your own dropbox folder location in .env to write out into
+## put your own dropbox folder and sheet locations in .env
 source(".env")
 
 #   ____________________________________________________________________________
@@ -24,12 +21,11 @@ source(".env")
 
 # run read_sheet command once interactively to auth each session 
 # and then you can run the rest of the code in one go, 
-data <- read_sheet("https://docs.google.com/spreadsheets/d/1PCPWLyyreBHMqRmqM5RiUb0xB6Ja_ADf85t5r79Bp3E/edit#gid=29259935")
+data <- read_sheet(gsheet_env)
 
 #   ____________________________________________________________________________
 #   RUN AGAIN                                                               ####
 data <- janitor::clean_names(data)
-
 
 ##  ............................................................................
 ##  Benfer / Columbia State Legal Data                                      ####
@@ -55,10 +51,7 @@ data_nyu_state <- data_nyu_state %>%
 	mutate(state = ifelse(stringr::str_detect(state, "MARYLAND \\(MD SUMMARY"), "MARYLAND (MD) SUMMARY", state))
 data_nyu_state$state_field <- stringr::str_sub(data_nyu_state$state, end = -14 )
 data_nyu_state$current_status <- as.factor(data_nyu_state$current_status)
-
 readr::write_csv(data_nyu_state, paste("./data_log/data_nyu",lubridate::today(),".csv"))
-
-
 
 #   ____________________________________________________________________________
 #   Feature Creation - Turn Entries and Variables Into Scorables Features   ####
@@ -111,9 +104,9 @@ rlist::list.save(data_log, paste('./variable_log/factor_list',lubridate::today()
 
 data_tab$state <- trimws(toupper(data_tab$what_u_s_state_or_territory_is_it_in))
 data_tab$geo <- ifelse( stringr::fixed(as.character(data_tab$state)) == 
-													stringr::fixed(trimws(toupper(data_tab$where_does_this_protection_or_campaign_apply))),
-												data_tab$state,
-												paste(data_tab$where_does_this_protection_or_campaign_apply,  data_tab$state, sep = ", " ))
+	stringr::fixed(trimws(toupper(data_tab$where_does_this_protection_or_campaign_apply))),
+	data_tab$state,
+	paste(data_tab$where_does_this_protection_or_campaign_apply,  data_tab$state, sep = ", " ))
 
 data_tab <- data_tab %>% mutate(geo = gsub("Ã±", "ñ", geo))
  
@@ -143,39 +136,44 @@ source("./code_sourcing/code_points.r")
 
 data_points1$rank <- cut(data_points1$pts_total, breaks = 3, labels = c(1,2,3),  names = TRUE)
 
-data_tab_out <- bind_cols(data_tab_nyu, data_points1 %>% select(rank, pts_total), data_points2, data_points3, data_points4, 
-													data_points5, data_points6, data_points7, data_points8, data_points9, data_points10, data_points11)
+data_tab_out <- bind_cols(data_tab_nyu, data_points1 %>% 
+	select(rank, pts_total), data_points2, data_points3, data_points4, 
+	data_points5, data_points6, data_points7, data_points8, data_points9, data_points10, data_points11)
 
 
 #   ____________________________________________________________________________
 #   Data Reconcilliation                                                    ####
 
 data_tab_out$policy_type = case_when(stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_eviction_protections) %in% c("Yes") ~ "Eviction Protection", 
-																		stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_an_rental_relief_protection) %in% c("Yes") ~ "Renter Relief",
-																		stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_a_court_law_enforcement_policy_change) %in% c("Yes") ~ "Court or Law Enforcement_policy",
-																		TRUE ~ NA_character_)
+	stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_an_rental_relief_protection) %in% c("Yes") ~ "Renter Relief",
+	stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_a_court_law_enforcement_policy_change) %in% c("Yes") ~ "Court or Law Enforcement_policy",
+	TRUE ~ NA_character_)
 
-data_export <- data_tab_out %>% select(municipality = geo, state, Country = is_it_in_the_united_states_or_a_u_s_territory, admin_scale = what_scale_does_it_apply_to_alcance_o_nivel_administrativo,
-																			 lat, lng = long, passed = is_this_an_active_organizing_campaign_or_a_tenant_protection_that_has_been_enacted, policy_summary = tenant_protection_policy_summary,
-																			 range = rank, policy_type, link = link_to_source, resource = tenant_resources,
-																			 state_level_legal_status = current_status, state_level_legal_summary = state_summary, point_total = pts_total, starts_with("pts_"))
+data_export <- data_tab_out %>% select(municipality = geo, state, 
+	Country = is_it_in_the_united_states_or_a_u_s_territory, 
+	admin_scale = what_scale_does_it_apply_to_alcance_o_nivel_administrativo,
+	lat, lng = long, passed = is_this_an_active_organizing_campaign_or_a_tenant_protection_that_has_been_enacted, 
+	policy_summary = tenant_protection_policy_summary,
+	range = rank, policy_type, link = link_to_source, resource = tenant_resources,
+	state_level_legal_status = current_status, state_level_legal_summary = state_summary, 
+	point_total = pts_total, starts_with("pts_"))
 
 data_export$municipality <- stringi::stri_trans_totitle(sapply(strsplit(data_export$municipality,","), `[`, 1))
 data_export$state <- stringi::stri_trans_totitle(data_export$state)
 data_export$Country <- ifelse( data_export$Country == "Yes", "United States", NA)
 data_export$ISO <- ifelse( data_export$Country == "United States", "USA", NA)
 data_export$admin_scale = forcats::fct_recode( data_export$admin_scale, 
-																							 "City" = "City // Ciudad",
-																							 "County" = "County // Condado" ,
-																							 "State" = "State // Estado",
-																							 "State" = "Territory" # sorry!
-																							 #Nation/ Country
-																							 )
+	"City" = "City // Ciudad",
+	"County" = "County // Condado" ,
+	"State" = "State // Estado",
+	"State" = "Territory" # sorry!
+	#Nation/ Country
+	)
 data_export$passed <- as.character(forcats::fct_recode( data_export$passed, 
-																					"FALSE" = "Active campaign",
-																					"FALSE" = "Relief Fund",
-																					"TRUE" =  "Existing tenant protection"
-																					))
+	"FALSE" = "Active campaign",
+	"FALSE" = "Relief Fund",
+	"TRUE" =  "Existing tenant protection"
+	))
 data_export$passed <- as.logical(data_export$passed)
 data_export$range <- as.numeric(as.character(data_export$range))
 
@@ -187,30 +185,30 @@ data_export$range <- as.numeric(as.character(data_export$range))
 
 data_int <- read_sheet("https://docs.google.com/spreadsheets/d/1rvVllKDvzHtzSEphhrgFVMZRCbFCewfOfq3ccwPRa1c/edit#gid=608427658")
 data_int <- janitor::clean_names(data_int)
-data_int_s <- data_int %>% select(municipality, state, Country = country_5, ISO = iso, admin_scale = administrative_scale, range,
-																lng = longitude, lat = latitude, passed = has_the_legislation_been_passed, resource = resources,
-																policy_summary = policy_description, link = link, resource = resources, policy_type = type_of_policy,
-																-start_date, -end_date, -other_feedback_17, -other_feedback_20, -timestamp, -email_address, 
-																-country_19)
+data_int_s <- data_int %>% select(municipality, state, Country = country_5, ISO = iso, 
+	admin_scale = administrative_scale, range,
+	lng = longitude, lat = latitude, passed = has_the_legislation_been_passed, resource = resources,
+	policy_summary = policy_description, link = link, resource = resources, policy_type = type_of_policy,
+	-start_date, -end_date, -other_feedback_17, -other_feedback_20, -timestamp, -email_address, 
+	-country_19)
 
 # gsubfn::gsubfn(data_int_s$municipality, list("á"="a", "é"="e", "ó"="o"), c("á","é","ó"))
 data_int_s <- data_int_s %>% mutate(
-																		municipality = gsub("Ã©", "é", municipality), #QuÃ©bec , Québec
-																		municipality = gsub("Ã¨", "è", municipality),
-																		municipality = gsub("Ã£", "ã", municipality),
-																		municipality = gsub("Ã±", "ñ", municipality),
-																		
-																		state = gsub("Ã£", "ã", state),
-																		state = gsub("Ã©", "é", state),
+	municipality = gsub("Ã©", "é", municipality), #QuÃ©bec , Québec
+	municipality = gsub("Ã¨", "è", municipality),
+	municipality = gsub("Ã£", "ã", municipality),
+	municipality = gsub("Ã±", "ñ", municipality),
+	
+	state = gsub("Ã£", "ã", state),
+	state = gsub("Ã©", "é", state),
 
-																		policy_summary = gsub("Ã¡", "á", policy_summary),
-																		policy_summary = gsub("Ã£", "ã", policy_summary), #"MaranhÃ£o", "Maranhão
-																		policy_summary = gsub("Ã©", "é", policy_summary), 
-																		policy_summary = gsub("Ã§", "ç", policy_summary),
-																		policy_summary = gsub("Ãµ", "õ", policy_summary),
-																		policy_summary = gsub("Ã¸", "ø", policy_summary), #"BaunehÃ¸jhallen", "Baunehøjhallen",)
-																		policy_summary = gsub("nÂ°11", "n°11",policy_summary))
-																	
+	policy_summary = gsub("Ã¡", "á", policy_summary),
+	policy_summary = gsub("Ã£", "ã", policy_summary), #"MaranhÃ£o", "Maranhão
+	policy_summary = gsub("Ã©", "é", policy_summary), 
+	policy_summary = gsub("Ã§", "ç", policy_summary),
+	policy_summary = gsub("Ãµ", "õ", policy_summary),
+	policy_summary = gsub("Ã¸", "ø", policy_summary), #"BaunehÃ¸jhallen", "Baunehøjhallen",)
+	policy_summary = gsub("nÂ°11", "n°11",policy_summary))
 
 data_int_filter <- data_int_s %>% filter(ISO != "USA" | (ISO == "USA" & admin_scale == "Country"))
 data_int_filter$passed <- as.logical(data_int_filter$passed)
@@ -225,8 +223,8 @@ data_export_dom_int <- data_export_dom_int %>%
 
 #### repeat dual city / county jurisdictions ####
 data_export_dom_int <- bind_rows(data_export_dom_int, 
-																 (data_export_dom_int %>% 
-																											 	filter(municipality == "San Francisco") %>% mutate(admin_scale = "County")))
+	(data_export_dom_int %>% filter(municipality == "San Francisco") %>%
+	mutate(admin_scale = "County")))
 
 
 #### write out 
