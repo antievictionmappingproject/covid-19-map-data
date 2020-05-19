@@ -4,5 +4,5 @@ variable_check.xlsx
 variable_check1 (version 1).xlsb
 .RData
 .Rhistory
-\charts
-\code_sourcing\z_cruft.r
+/charts
+/code_sourcing/z_cruft.r
