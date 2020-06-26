@@ -7,35 +7,23 @@
 
 library(ggplot2)
 
-qplot(data)
+# qplot(data)
 
 table((data_int_graphs %>% filter(ISO != "USA"))$range, (data_int_graphs %>% filter(ISO != "USA"))$admin_scale )
 
-gd <- data_export %>% 
+gd <- data_export1 %>% 
 	group_by(admin_scale) %>% 
 	summarise(
-		point_total = mean(point_total)
-	)
+		point_total = mean(point_total))
 
 # Plot both data sets
-ggplot( data_export, aes(x = as.numeric(point_total), fill = as.factor(range) )) +
+ggplot( data_export1, aes(x = as.numeric(point_total), fill = as.factor(range) )) +
 	geom_histogram() +  geom_vline(data=gd, aes(xintercept=point_total, color=admin_scale ))+
 	theme_bw() + theme(legend.position="top")
 	# geom_line(data = gd, x = point_total)
 
-ggplot(data_export, aes(x = admin_scale, y = point_total, color = as.factor(range), fill = as.factor(range))) +
-	geom_hline(data = gd, aes(yintercept = point_total, color = admin_scale), alpha = .3, size = 3) +
-	ggrepel::geom_text_repel(aes(label = municipality), color = "black", size = 2.5, segment.color = "grey") +
-	geom_point( ) +
-	# guides(color = "none", fill = "none") +
-	theme_bw() +
-	labs(
-		title = "Point Totals",
-		x = "Admin Style",
-		y = "Points"
-	)
 
-ggplot(data_export, aes(x = admin_scale, y = as.numeric(range), color = admin_scale, fill = admin_scale)) +
+ggplot(data_export1, aes(x = admin_scale, y = as.numeric(range), color = admin_scale, fill = admin_scale)) +
 # geom_hline(data = gd, aes(yintercept = rank, color = admin_scale), alpha = .3, size = 3) +
 ggrepel::geom_text_repel(aes(label = municipality), color = "black", size = 2.5, segment.color = "grey") +
 geom_point() +
@@ -50,7 +38,7 @@ geom_point() +
 data_export_dom_int -> data_int_graphs
 
 data_int_graphs$geocountry <- trimws(toupper(data_int_graphs$Country))
-data_int_graphs$geostate <- trimws(toupper(data_int_graphs$state)
+data_int_graphs$geostate <- trimws(toupper(data_int_graphs$state))
 
 data_int_graphs <- data_int_graphs %>% mutate( municipality =  case_when( municipality != "" ~ municipality,
 																																					municipality == "" & state != "" ~ state,
@@ -61,6 +49,7 @@ data_int_graphs <- data_int_graphs %>% mutate( municipality =  case_when( munici
 # 												data_tab$state,
 # 												paste(data_tab$where_does_this_protection_or_campaign_apply,  data_tab$state, sep = ", " ))
 
+forcats::fct_relevel(data_int_graphs$admin_scale, "City", "State", "Country") -> data_int_graphs$admin_scale
 
 #international grouping
 ggplot(data_int_graphs %>% filter(ISO != "USA" & municipality != "West Virginia"), aes(x = admin_scale, y = as.factor(range), color = admin_scale, fill = admin_scale)) +
@@ -90,10 +79,10 @@ qplot(as.numeric( (data_export_dom_int %>% filter(admin_scale == "State"))$point
 ## plotly
 
 
-qplot(data_export$point_total, fill= data_export$admin_scale)
-qplot(data_export$point_total, color = data_export$admin_scale)
-qplot(data_export$point_total, color = admin_scale)
-qplot(data_export$point_total)
+qplot(data_export1$point_total, fill= data_export1$admin_scale)
+qplot(data_export1$point_total, color = data_export1$admin_scale)
+qplot(data_export1$point_total, color = admin_scale)
+qplot(data_export1$point_total)
 
 # ggplot2::ggplot( data_tab, aes( long, lat),color="grey98") +
 # 	borders("state") + theme_classic() + geom_point() +
