@@ -86,4 +86,26 @@ data_fact_evictions_rejoin <-data_fact_evictions %>%
 		eviction_protection_all_evictions_public_subsidized,
     eviction_protection_nonpayment_public_subsidized)
 
-		
+
+
+## Benfer expiration Date recoding
+
+data_nyu_state <- data_nyu_state %>% mutate( expiration = gsub(" \\(governor\\)", "", expiration_date),
+																						 expiration = gsub(" \\(court\\) end of public health emergency", "", expiration),
+																						 expiration = gsub(" \\(legislation\\)", "", expiration),
+																						 expiration = gsub(" \\(civil\\) 5\\/30\\/20 \\(foreclosure\\)", "", expiration),
+																						 expiration = gsub("\\/2020", "\\/20", expiration))
+lev_of(data_nyu_state$expiration)
+
+
+<- forcats::fct_recode(data_nyu_state$expiration_date, 
+																									"5/15/20" = "5/15/20 (governor)",
+# OPEN to NA
+# emergency to NA 
+# N/A to NA
+# date variablese
+
+# split into  governor / legistlative, and court?
+# make an emergency variable but for later, implement and tie togethr with our own emergency variable
+# recode other variables to end of emergency
+# 
