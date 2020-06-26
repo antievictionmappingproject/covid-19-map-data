@@ -10,3 +10,5 @@ variable_check1 (version 1).xlsb
 /.vscode
 /code_sourcing/code_florida.r
 /code_sourcing/test_graphs.r
+/code_sourcing/z_tenants together_check.r
+code_sourcing/z_tenant together_check.r
