@@ -6,3 +6,6 @@ variable_check1 (version 1).xlsb
 .Rhistory
 /charts
 /code_sourcing/z_cruft.r
+.Rproj.user
+.vscode
+
