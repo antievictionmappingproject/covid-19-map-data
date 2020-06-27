@@ -94,12 +94,13 @@ data_nyu_state <- data_nyu_state %>% mutate( expiration = gsub(" \\(governor\\)"
 																						 expiration = gsub(" \\(court\\) end of public health emergency", "", expiration),
 																						 expiration = gsub(" \\(legislation\\)", "", expiration),
 																						 expiration = gsub(" \\(civil\\) 5\\/30\\/20 \\(foreclosure\\)", "", expiration),
-																						 expiration = gsub("\\/2020", "\\/20", expiration))
-lev_of(data_nyu_state$expiration)
+																						 expiration = gsub("\\/2020", "\\/20", expiration),
+																						 expiration = gsub("  \\(court\\)", "", expiration))
+# lev_of(data_nyu_state$expiration)
 
 
-<- forcats::fct_recode(data_nyu_state$expiration_date, 
-																									"5/15/20" = "5/15/20 (governor)",
+# <- forcats::fct_recode(data_nyu_state$expiration_date, 
+# 																									"5/15/20" = "5/15/20 (governor)",
 # OPEN to NA
 # emergency to NA 
 # N/A to NA

@@ -40,11 +40,67 @@ data <- read_sheet(gsheet_env)
 #   RUN AGAIN                                                               ####
 data <- janitor::clean_names(data)
 
+# google form questions had spanish translations added which changed variable names, this reverts names so code runs
+
+data <- data %>% select(
+	after_the_temporary_protection_ends_how_long_will_tenants_have_to_pay_the_rent_they_missed_during_the_emergency = after_the_temporary_protection_ends_how_long_will_tenants_have_to_pay_the_rent_they_missed_during_the_emergency_despues_que_la_emergencia_ha_terminado_cuanto_tiempo_tienen_los_inquilinos_para_pagar_la_renta_que_no_han_pagado,
+	how_are_tenants_protected_against_eviction = how_are_tenants_protected_against_eviction_como_se_protege_a_los_inquilinos_contra_el_desalojo,
+	what_types_of_evictions_are_protected = what_types_of_evictions_are_protected_que_tipos_de_desalojos_estan_protegidos,
+	what_u_s_state_or_territory_is_it_in = what_u_s_state_or_territory_is_it_in_en_que_estado_o_territorio_de_los_estados_unidos_esta_implementada_la_regulacion,
+	where_does_this_protection_or_campaign_apply = where_does_this_protection_or_campaign_apply_donde_esta_implementada_la_medida_de_proteccion_o_campana,
+	does_the_notification_have_to_be_in_writing = does_the_notification_have_to_be_in_writing_debe_ser_la_notificacion_por_escrito,
+	do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent = 
+		do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent_deben_los_inquilinos_proveer_alguna_documentacion_para_su_proteccion_por_ejemplo_justificar_que_no_pueden_pagar_la_renta,
+	when_do_tenants_have_to_provide_documentation = 
+		when_do_tenants_have_to_provide_documentation_cuando_es_que_los_inquilinos_tienen_que_proveer_documentacion,
+	do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent = 
+		do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent_deben_los_inquilinos_proveer_alguna_documentacion_para_su_proteccion_por_ejemplo_justificar_que_no_pueden_pagar_la_renta,
+	what_does_the_law_say_about_paying_part_of_the_rent =
+		what_does_the_law_say_about_paying_part_of_the_rent_que_es_lo_que_la_ley_dice_acerca_de_pagar_renta_parcial,
+	can_landlords_charge_late_fees_or_interest_on_missed_rent_payments =
+		can_landlords_charge_late_fees_or_interest_on_missed_rent_payments_pueden_los_propietarios_cobrar_cargo_por_retraso_o_interes_en_renta_no_pagada,
+	what_does_the_policy_say_about_repayment_plans =
+		what_does_the_policy_say_about_repayment_plans_que_dice_la_medida_de_proteccion_acerca_de_planes_de_pago,
+	are_courts_holding_eviction_proceedings =
+		are_courts_holding_eviction_proceedings_estan_los_tribunales_llevando_a_cabo_procedimientos_de_desalojo,
+	will_courts_issue_writs_of_possession_i_e_order_the_tenant_to_leave =
+		will_courts_issue_writs_of_possession_i_e_order_the_tenant_to_leave_estan_las_cortes_dando_ordenes_de_desalojo_es_decir_ordenaran_que_el_inquilino_se_vaya,
+	will_law_enforcement_act_on_writs_of_possession_i_e_forcibly_remove_tenants_from_their_homes =
+		will_law_enforcement_act_on_writs_of_possession_i_e_forcibly_remove_tenants_from_their_homes_tomaria_accion_las_agencias_de_policia_sobre_la_orden_de_desalojo_es_decir_sacar_a_la_fuerza_a_los_inquilinos_de_sus_hogares,
+	is_there_a_ban_on_rent_increases = 
+		is_there_a_ban_on_rent_increases_existe_una_prohibicion_de_aumentos_de_renta,
+	can_landlords_charge_late_fees_or_interest_on_missed_rent_payments = 
+		can_landlords_charge_late_fees_or_interest_on_missed_rent_payments_pueden_los_propietarios_cobrar_cargo_por_retraso_o_interes_en_renta_no_pagada,
+	can_tenants_pay_some_or_all_of_their_rent_out_of_their_security_deposit = 
+		can_tenants_pay_some_or_all_of_their_rent_out_of_their_security_deposit_pueden_los_inquilinos_pagar_parte_o_toda_la_renta_con_su_deposito_de_garantia,
+	do_you_want_to_tell_us_about_eviction_protections = 
+		do_you_want_to_tell_us_about_eviction_protections_nos_puedes_platicar_sobre_protecciones_contra_el_desalojo,
+	do_you_want_to_tell_us_about_an_rental_relief_protection =
+		do_you_want_to_tell_us_about_an_rental_relief_protection_quiere_contarnos_sobre_subsidio_para_la_renta,
+	do_you_want_to_tell_us_about_a_court_law_enforcement_policy_change =
+		do_you_want_to_tell_us_about_a_court_law_enforcement_policy_change_quiere_decirnos_sobre_cambios_en_las_medidas_de_proteccion_relacionadas_con_su_implementacion_o_su_cumplimiento,
+	is_it_in_the_united_states_or_a_u_s_territory = is_it_in_the_united_states_or_a_u_s_territory_la_medida_se_encuentra_en_los_estados_unidos_o_alguno_de_sus_territorios,
+	is_this_an_active_organizing_campaign_or_a_tenant_protection_that_has_been_enacted = is_this_an_active_organizing_campaign_or_a_tenant_protection_that_has_been_enacted_la_politica_que_nos_compartes_es_una_campana_para_una_nueva_medida_o_una_medida_de_proteccion_que_ya_esta_implementada,
+	tenant_protection_policy_summary =
+		tenant_protection_policy_summary_resumen_de_las_politicas_de_proteccion_a_los_inquilinos,
+	link_to_source = link_to_source_link_al_recurso,
+	tenant_resources =	tenant_resources_recursos_para_inquilinos,
+	
+	
+	everything()
+)
+
+
+
+
+
+
+
 ##  ............................................................................
 ##  Benfer / Columbia State Legal Data                                      ####
 
-# downloading via html not sheets
-url <- "https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vTH8dUIbfnt3X52TrY3dEHQCAm60e5nqo0Rn1rNCf15dPGeXxM9QN9UdxUfEjxwvfTKzbCbZxJMdR7X/pubhtml" # ?gid=1277129435&single=true&urp=gmail_link"
+# downloading via html not sheets 
+url <- "https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vTH8dUIbfnt3X52TrY3dEHQCAm60e5nqo0Rn1rNCf15dPGeXxM9QN9UdxUfEjxwvfTKzbCbZxJMdR7X/pubhtml?gid=1277129435&single=true&urp=gmail_link"
 page <- read_html(url)
 table <- html_table(page, fill = TRUE)
 data_nyu <- table[[1]]
@@ -81,6 +137,9 @@ data$how_long1 <- as.factor(sapply(data$how_long,function(x) ifelse(is.null(x),N
 
 data$end_date_31 <- as.numeric(sapply(data$end_date_31,function(x) ifelse(is.null(x),NA,x)))
 data$end_date_31 <- lubridate::as_datetime(data$end_date_31)
+
+data$reviewed_date <- as.numeric(sapply(data$reviewed_date,function(x) ifelse(is.null(x),NA,x)))
+data$reviewed_date <- lubridate::as_datetime(data$reviewed_date)
 
 ### . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ..
 ### Q1 Policy Type - How Are Tenants Protected Against Eviction             ####
@@ -374,8 +433,8 @@ data_int_s <- data_int %>% select(municipality, state, Country = country_5, ISO 
 	-country_19)
 data_int_s$end_date_earliest <- as.factor(sapply(data_int_s$end_date_earliest,function(x) ifelse(is.null(x),NA,x)))
 
-data_int_s$end_date_earliest[11] <- NA
-data_int_s$end_date_earliest[79] <- NA
+# data_int_s$end_date_earliest[11] <- NA
+# data_int_s$end_date_earliest[79] <- NA
 data_int_s$end_date_earliest <- as.numeric(as.character(data_int_s$end_date_earliest))
 
 data_int_s$end_date_earliest <- as.character(lubridate::as_date(anytime::anytime( data_int_s$end_date_earliest )))
