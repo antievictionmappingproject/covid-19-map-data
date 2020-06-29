@@ -86,12 +86,8 @@ data <- data %>% select(
 	link_to_source = link_to_source_link_al_recurso,
 	tenant_resources =	tenant_resources_recursos_para_inquilinos,
 	
-	
 	everything()
 )
-
-
-
 
 
 
@@ -149,8 +145,17 @@ data_fact$protect <- stringr::str_replace_all(as.character(data_fact$how_are_ten
 																							stringr::fixed("Moratorium (landlords are not allowed to serve notices to tenants)") ,
 																							"Moratorium")
 data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
+																							stringr::fixed("Moratorium // Moratoria (los propietarios no pueden enviar orden de desalojo a los inquilinos)") ,
+																							"Moratorium")
+
+
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
 																							stringr::fixed("Defense (tenants have a defense in court against eviction actions)") ,
 																							"Defense")
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
+																							stringr::fixed("Defense // Defensa (los inquilinos tienen el derecho a una defensa en la cortes contra acciones de desalojo)") ,
+																							"Defense")
+
 data_fact$protect <- as.factor(data_fact$protect)
 
 # tabulate and split google forms multiple selections
@@ -240,9 +245,9 @@ data_tab_out <- bind_cols(data_tab_nyu, data_points1 %>%
 #   ____________________________________________________________________________
 #   Data Reconciliation                                                    ####
 
-data_tab_out$policy_type = case_when(stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_eviction_protections) %in% c("Yes") ~ "Legistlative Eviction Protection", 
-	stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_an_rental_relief_protection) %in% c("Yes") ~ "Rental Relief Policy",
-	stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_a_court_law_enforcement_policy_change) %in% c("Yes") ~ "Court-Based Eviction Policy",
+data_tab_out$policy_type = case_when(stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_eviction_protections) %in% c("Yes", "Yes // Si") ~ "Legistlative Eviction Protection", 
+	stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_an_rental_relief_protection) %in% c("Yes", "Yes // Si") ~ "Rental Relief Policy",
+	stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_a_court_law_enforcement_policy_change) %in% c("Yes", "Yes // Si") ~ "Court-Based Eviction Policy",
 	TRUE ~ NA_character_)
 
 # data_tab_out$
@@ -274,8 +279,10 @@ data_export$admin_scale = forcats::fct_recode( data_export$admin_scale,
 data_export$passed <- as.character(forcats::fct_recode( data_export$passed, 
 	"FALSE" = "Active campaign",
 	"FALSE" = "Relief Fund",
-	"TRUE" =  "Existing tenant protection"
+	"TRUE" =  "Existing tenant protection",
+	"TRUE" = "Existing tenant protection // Medida de proteccion existente"
 	))
+
 data_export$passed <- as.logical(data_export$passed)
 data_export$end_date_earliest <- as.character(data_export$end_date_earliest)
 data_export$end_date_legist <- as.character(data_export$end_date_legist)
@@ -498,6 +505,8 @@ data_export_dom_int <- bind_rows(data_export_dom_int,
 	(data_export_dom_int %>% filter(municipality == "San Francisco") %>%
 	mutate(admin_scale = "County")))
 
+# super quick sanity check (max ~35, min negative 12)
+#summary(as.numeric(data_export_dom_int$point_total)
 
 #### write out 
 readr::write_excel_csv(data_export_dom_int, paste0("./data_out/data_scored",lubridate::today(),".csv"))
