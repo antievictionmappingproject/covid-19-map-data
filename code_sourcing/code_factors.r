@@ -19,6 +19,12 @@ data_fact2$eviction_types <- stringr::str_replace_all(as.character(data_fact2$ev
 
 # nonpayment 
 data_fact2$eviction_types <- stringr::str_replace_all(as.character(data_fact2$eviction_types), 
+																											stringr::fixed("nonpayment // Desalojos por falta de pago de renta a causa de COVID-19"), 
+																											"nonpayment")
+
+
+
+data_fact2$eviction_types <- stringr::str_replace_all(as.character(data_fact2$eviction_types), 
 																											stringr::fixed("Evictions for non-payment of rent related to COVID-19"), 
 																											"nonpayment")
 
