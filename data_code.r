@@ -43,48 +43,67 @@ data <- janitor::clean_names(data)
 # google form questions had spanish translations added which changed variable names, this reverts names so code runs
 
 data <- data %>% select(
-	after_the_temporary_protection_ends_how_long_will_tenants_have_to_pay_the_rent_they_missed_during_the_emergency = after_the_temporary_protection_ends_how_long_will_tenants_have_to_pay_the_rent_they_missed_during_the_emergency_despues_que_la_emergencia_ha_terminado_cuanto_tiempo_tienen_los_inquilinos_para_pagar_la_renta_que_no_han_pagado,
-	how_are_tenants_protected_against_eviction = how_are_tenants_protected_against_eviction_como_se_protege_a_los_inquilinos_contra_el_desalojo,
-	what_types_of_evictions_are_protected = what_types_of_evictions_are_protected_que_tipos_de_desalojos_estan_protegidos,
-	what_u_s_state_or_territory_is_it_in = what_u_s_state_or_territory_is_it_in_en_que_estado_o_territorio_de_los_estados_unidos_esta_implementada_la_regulacion,
-	where_does_this_protection_or_campaign_apply = where_does_this_protection_or_campaign_apply_donde_esta_implementada_la_medida_de_proteccion_o_campana,
-	does_the_notification_have_to_be_in_writing = does_the_notification_have_to_be_in_writing_debe_ser_la_notificacion_por_escrito,
+	after_the_temporary_protection_ends_how_long_will_tenants_have_to_pay_the_rent_they_missed_during_the_emergency = 
+		starts_with("after_the_temporary_protection_ends_how_long_will_tenants_have_to_pay_the_rent_they_missed_during_the_emergency_despues_que_la_emergencia_ha_terminado_cuanto_tiempo_tienen_los_inquilinos_para_pagar_la_renta_que_no_han_pagado"),
+	how_are_tenants_protected_against_eviction = 
+		starts_with("how_are_tenants_protected_against_eviction_como_se_protege_a_los_inquilinos_contra_el_desalojo"),
+	how_much_time_do_tenants_have_to_notify_their_landlords = 
+		starts_with("how_much_time_do_tenants_have_to_notify_their_landlords"),
+	what_types_of_evictions_are_protected = 
+		starts_with("what_types_of_evictions_are_protected_que_tipos_de_desalojos_estan_protegidos"),
+	what_u_s_state_or_territory_is_it_in = 
+		starts_with("what_u_s_state_or_territory_is_it_in_en_que_estado_o_territorio_de_los_estados_unidos_esta_implementada_la_regulacion"),
+	where_does_this_protection_or_campaign_apply = 
+		starts_with("where_does_this_protection_or_campaign_apply_donde_esta_implementada_la_medida_de_proteccion_o_campana"),
+	does_the_notification_have_to_be_in_writing = 
+		starts_with("does_the_notification_have_to_be_in_writing_debe_ser_la_notificacion_por_escrito"),
 	do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent = 
-		do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent_deben_los_inquilinos_proveer_alguna_documentacion_para_su_proteccion_por_ejemplo_justificar_que_no_pueden_pagar_la_renta,
+	starts_with("do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent_deben_los_inquilinos_proveer_alguna_documentacion_para_su_proteccion_por_ejemplo_justificar_que_no_pueden_pagar_la_renta"),
 	when_do_tenants_have_to_provide_documentation = 
-		when_do_tenants_have_to_provide_documentation_cuando_es_que_los_inquilinos_tienen_que_proveer_documentacion,
+		starts_with("when_do_tenants_have_to_provide_documentation_cuando_es_que_los_inquilinos_tienen_que_proveer_documentacion"),
 	do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent = 
-		do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent_deben_los_inquilinos_proveer_alguna_documentacion_para_su_proteccion_por_ejemplo_justificar_que_no_pueden_pagar_la_renta,
+		starts_with("do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent_deben_los_inquilinos_proveer_alguna_documentacion_para_su_proteccion_por_ejemplo_justificar_que_no_pueden_pagar_la_renta"),
 	what_does_the_law_say_about_paying_part_of_the_rent =
-		what_does_the_law_say_about_paying_part_of_the_rent_que_es_lo_que_la_ley_dice_acerca_de_pagar_renta_parcial,
+		starts_with("what_does_the_law_say_about_paying_part_of_the_rent_que_es_lo_que_la_ley_dice_acerca_de_pagar_renta_parcial"),
 	can_landlords_charge_late_fees_or_interest_on_missed_rent_payments =
-		can_landlords_charge_late_fees_or_interest_on_missed_rent_payments_pueden_los_propietarios_cobrar_cargo_por_retraso_o_interes_en_renta_no_pagada,
+		starts_with("can_landlords_charge_late_fees_or_interest_on_missed_rent_payments_pueden_los_propietarios_cobrar_cargo_por_retraso_o_interes_en_renta_no_pagada"),
 	what_does_the_policy_say_about_repayment_plans =
-		what_does_the_policy_say_about_repayment_plans_que_dice_la_medida_de_proteccion_acerca_de_planes_de_pago,
+		starts_with("what_does_the_policy_say_about_repayment_plans_que_dice_la_medida_de_proteccion_acerca_de_planes_de_pago"),
 	are_courts_holding_eviction_proceedings =
-		are_courts_holding_eviction_proceedings_estan_los_tribunales_llevando_a_cabo_procedimientos_de_desalojo,
+		starts_with("are_courts_holding_eviction_proceedings_estan_los_tribunales_llevando_a_cabo_procedimientos_de_desalojo"),
 	will_courts_issue_writs_of_possession_i_e_order_the_tenant_to_leave =
-		will_courts_issue_writs_of_possession_i_e_order_the_tenant_to_leave_estan_las_cortes_dando_ordenes_de_desalojo_es_decir_ordenaran_que_el_inquilino_se_vaya,
+		starts_with("will_courts_issue_writs_of_possession_i_e_order_the_tenant_to_leave_estan_las_cortes_dando_ordenes_de_desalojo_es_decir_ordenaran_que_el_inquilino_se_vaya"),
 	will_law_enforcement_act_on_writs_of_possession_i_e_forcibly_remove_tenants_from_their_homes =
-		will_law_enforcement_act_on_writs_of_possession_i_e_forcibly_remove_tenants_from_their_homes_tomaria_accion_las_agencias_de_policia_sobre_la_orden_de_desalojo_es_decir_sacar_a_la_fuerza_a_los_inquilinos_de_sus_hogares,
+		starts_with("will_law_enforcement_act_on_writs_of_possession_i_e_forcibly_remove_tenants_from_their_homes_tomaria_accion_las_agencias_de_policia_sobre_la_orden_de_desalojo_es_decir_sacar_a_la_fuerza_a_los_inquilinos_de_sus_hogares"),
 	is_there_a_ban_on_rent_increases = 
-		is_there_a_ban_on_rent_increases_existe_una_prohibicion_de_aumentos_de_renta,
+		starts_with("is_there_a_ban_on_rent_increases_existe_una_prohibicion_de_aumentos_de_renta"),
 	can_landlords_charge_late_fees_or_interest_on_missed_rent_payments = 
-		can_landlords_charge_late_fees_or_interest_on_missed_rent_payments_pueden_los_propietarios_cobrar_cargo_por_retraso_o_interes_en_renta_no_pagada,
+		starts_with("can_landlords_charge_late_fees_or_interest_on_missed_rent_payments_pueden_los_propietarios_cobrar_cargo_por_retraso_o_interes_en_renta_no_pagada"),
 	can_tenants_pay_some_or_all_of_their_rent_out_of_their_security_deposit = 
-		can_tenants_pay_some_or_all_of_their_rent_out_of_their_security_deposit_pueden_los_inquilinos_pagar_parte_o_toda_la_renta_con_su_deposito_de_garantia,
+		starts_with("can_tenants_pay_some_or_all_of_their_rent_out_of_their_security_deposit_pueden_los_inquilinos_pagar_parte_o_toda_la_renta_con_su_deposito_de_garantia"),
 	do_you_want_to_tell_us_about_eviction_protections = 
-		do_you_want_to_tell_us_about_eviction_protections_nos_puedes_platicar_sobre_protecciones_contra_el_desalojo,
+	starts_with("do_you_want_to_tell_us_about_eviction_protections_nos_puedes_platicar_sobre_protecciones_contra_el_desalojo"),
 	do_you_want_to_tell_us_about_an_rental_relief_protection =
-		do_you_want_to_tell_us_about_an_rental_relief_protection_quiere_contarnos_sobre_subsidio_para_la_renta,
+		starts_with("do_you_want_to_tell_us_about_an_rental_relief_protection_quiere_contarnos_sobre_subsidio_para_la_renta"),
 	do_you_want_to_tell_us_about_a_court_law_enforcement_policy_change =
-		do_you_want_to_tell_us_about_a_court_law_enforcement_policy_change_quiere_decirnos_sobre_cambios_en_las_medidas_de_proteccion_relacionadas_con_su_implementacion_o_su_cumplimiento,
-	is_it_in_the_united_states_or_a_u_s_territory = is_it_in_the_united_states_or_a_u_s_territory_la_medida_se_encuentra_en_los_estados_unidos_o_alguno_de_sus_territorios,
-	is_this_an_active_organizing_campaign_or_a_tenant_protection_that_has_been_enacted = is_this_an_active_organizing_campaign_or_a_tenant_protection_that_has_been_enacted_la_politica_que_nos_compartes_es_una_campana_para_una_nueva_medida_o_una_medida_de_proteccion_que_ya_esta_implementada,
+		starts_with("do_you_want_to_tell_us_about_a_court_law_enforcement_policy_change_quiere_decirnos_sobre_cambios_en_las_medidas_de_proteccion_relacionadas_con_su_implementacion_o_su_cumplimiento"),
+	is_it_in_the_united_states_or_a_u_s_territory = 
+		starts_with("is_it_in_the_united_states_or_a_u_s_territory_la_medida_se_encuentra_en_los_estados_unidos_o_alguno_de_sus_territorios"),
+	is_this_an_active_organizing_campaign_or_a_tenant_protection_that_has_been_enacted = 
+		starts_with("is_this_an_active_organizing_campaign_or_a_tenant_protection_that_has_been_enacted_la_politica_que_nos_compartes_es_una_campana_para_una_nueva_medida_o_una_medida_de_proteccion_que_ya_esta_implementada"),
 	tenant_protection_policy_summary =
-		tenant_protection_policy_summary_resumen_de_las_politicas_de_proteccion_a_los_inquilinos,
-	link_to_source = link_to_source_link_al_recurso,
-	tenant_resources =	tenant_resources_recursos_para_inquilinos,
+		starts_with("tenant_protection_policy_summary_resumen_de_las_politicas_de_proteccion_a_los_inquilinos"),
+	link_to_source = 
+		starts_with("link_to_source_link_al_recurso"),
+	tenant_resources =	
+		starts_with("tenant_resources_recursos_para_inquilinos"),
+	court_l_e_policy_end_date_explanation = 
+		starts_with("court_l_e_policy_end_date_explanation_explicacion_de_fecha_de_finalizacion_de_corte_cumplimiento_de_la_ley"),
+	can_landlords_evict_tenants_if_they_haven_t_completely_paid_the_missed_rent =
+		starts_with("can_landlords_evict_tenants_if_they_haven_t_completely_paid_the_missed_rent_by_the_end_of_the_repayment_period_pueden_los_propietarios_desalojar_a_los_inquilinos_si_no_han_pagado_la_renta_completa_antes_de_la_fecha_estipulada"), 
+	end_date_31 = end_date_fecha_de_finalizacion_jie_shu_ri_qi_31,
+	end_date_36 = end_date_fecha_de_finalizacion_jie_shu_ri_qi_36,
+	end_date_43 = end_date_fecha_de_finalizacion_jie_shu_ri_qi_43,
 	
 	everything()
 )
@@ -131,11 +150,16 @@ readr::write_csv(data_nyu_state, paste("./data_log/data_nyu",lubridate::today(),
 data$how_long <- data$after_the_temporary_protection_ends_how_long_will_tenants_have_to_pay_the_rent_they_missed_during_the_emergency
 data$how_long1 <- as.factor(sapply(data$how_long,function(x) ifelse(is.null(x),NA,x)))
 
-data$end_date_31 <- as.numeric(sapply(data$end_date_31,function(x) ifelse(is.null(x),NA,x)))
+data$end_date_31 <- as.numeric(sapply( data$end_date_31,function(x) ifelse(is.null(x),NA,x)))
 data$end_date_31 <- lubridate::as_datetime(data$end_date_31)
 
-data$reviewed_date <- as.numeric(sapply(data$reviewed_date,function(x) ifelse(is.null(x),NA,x)))
+data$reviewed_date <- as.numeric(sapply( data$reviewed_date,function(x) ifelse(is.null(x),NA,x)))
 data$reviewed_date <- lubridate::as_datetime(data$reviewed_date)
+
+
+data$admin_protection_expiration <- as.character(sapply( data$admin_protection_expiration,function(x) ifelse(is.null(x),NA,x)))
+
+data$court_l_e_policy_end_date_explanation <- as.character(sapply( data$court_l_e_policy_end_date_explanation, function(x) ifelse(is.null(x),NA,x)))
 
 ### . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ..
 ### Q1 Policy Type - How Are Tenants Protected Against Eviction             ####
@@ -197,8 +221,8 @@ data_tab$geo <- ifelse( stringr::fixed(as.character(data_tab$state)) ==
 data_tab <- data_tab %>% mutate(geo = gsub("Ã±", "ñ", geo))
 
 # read in previously geocoded data to reduce geocoding time
-# change to latest version when updating on write
-data_gc <- readr::read_csv("./geocode_log/geocodes_2020-06-10.csv") 
+# change to latest version (LATEST GEOCODE WRITE) when updating on write
+data_gc <- readr::read_csv("./geocode_log/geocodes_2020-07-05.csv") 
 
 data_tab <- data_tab %>% left_join(data_gc, by = "geo")
 
@@ -214,7 +238,7 @@ if( nrow(data_tab_to_gc) != 0){
 	data_tab2 <- bind_rows(data_tab_gc )	
 }
 
-# run this every once in a while
+# LATEST GEOCODE WRITE run this every once in a while
 # readr::write_csv( (data_tab2 %>% select(geo, lat, long)), paste0("./geocode_log/geocodes_",lubridate::today(),'.csv'))
 
 
@@ -257,7 +281,7 @@ data_tab_out$policy_type = case_when(stringr::fixed(data_tab_out$do_you_want_to_
 
 data_export <- data_tab_out %>% select(municipality = geo, state, 
 	Country = is_it_in_the_united_states_or_a_u_s_territory, 
-	admin_scale = what_scale_does_it_apply_to_alcance_o_nivel_administrativo,
+	admin_scale = starts_with("what_scale_does_it_apply_to_alcance_o_nivel_administrativo"),
 	lat, lng = long, passed = is_this_an_active_organizing_campaign_or_a_tenant_protection_that_has_been_enacted, 
 	end_date_earliest = earliest_date_expiration, end_date_legist = end_date_31, end_date_rent_relief = end_date_36, end_date_court = end_date_43,
 	policy_summary = tenant_protection_policy_summary,
@@ -378,8 +402,8 @@ data_fl_out <- bind_cols(data_fl2, fl_data_points1 %>%
 												 	select( pts_total), fl_data_points2, fl_data_points3, fl_data_points4, 
 												 fl_data_points5, fl_data_points7, fl_data_points10)
 
-readr::write_csv(as.data.frame(data_fl2 %>% select(-ao_file)), paste("./data_log/data_fl_in",lubridate::today(),".csv"))
-readr::write_csv(as.data.frame(data_fl_out %>% select(-ao_file)), paste("./data_log/data_fl_out",lubridate::today(),".csv"))
+readr::write_csv(as.data.frame(data_fl2 %>% select(-ao_file, -eviction_moratorium_copy)), paste("./data_log/data_fl_in",lubridate::today(),".csv"))
+readr::write_csv(as.data.frame(data_fl_out %>% select(-ao_file, -eviction_moratorium_copy)), paste("./data_log/data_fl_out",lubridate::today(),".csv"))
 
 
 #   ____________________________________________________________________________
@@ -465,7 +489,8 @@ data_int_s <- data_int_s %>% mutate(
 	policy_summary = gsub("nÂ°11", "n°11",policy_summary))
 
 data_int_filter <- data_int_s %>% filter(ISO != "USA" | (ISO == "USA" & admin_scale == "Country"))
-data_int_filter$passed <- as.logical(data_int_filter$passed)
+data_int_filter$passed <- as.logical(sapply( data_int_filter$passed, function(x) ifelse(is.null(x),NA,x)))
+# data_int_filter$passed <- as.logical(data_int_filter$passed)
 
 data_int_filter$resource <- NULL ## currently empty so doesn't let a bind happen
 
@@ -478,7 +503,7 @@ data_int_city_to_gc <- data_int_filter %>% filter(admin_scale == "City", is.na(l
 if( nrow(data_int_city_to_gc) != 0){
 	data_int_city_to_gc$geo <- paste(data_int_city_to_gc$municipality, data_int_city_to_gc$Country)
 	data_int_city_to_gc <- data_int_city_to_gc %>%  
-		tidygeocoder::geocode(geo, method='cascade') %>% select(lng = long, -geo, everything() )
+		tidygeocoder::geocode(geo, method='cascade') %>% select( -geo, everything() )
 	data_int_gc <- bind_rows(data_int_city_to_gc, data_int_city, data_int_rest)
 	} else{
 		data_int_gc <- bind_rows(data_int_city, data_int_rest)	
@@ -506,7 +531,7 @@ data_export_dom_int <- bind_rows(data_export_dom_int,
 	mutate(admin_scale = "County")))
 
 # super quick sanity check (max ~35, min negative 12)
-#summary(as.numeric(data_export_dom_int$point_total)
+# summary(as.numeric(data_export_dom_int$point_total))
 
 #### write out 
 readr::write_excel_csv(data_export_dom_int, paste0("./data_out/data_scored",lubridate::today(),".csv"))
