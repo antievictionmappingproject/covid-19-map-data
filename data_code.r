@@ -2,6 +2,7 @@
 # devtools::install_github("tidyverse/googlesheets4") run once installs
 # install.packages('rlist', 'tidygeocoder', 'tidyverse', 'qdapTools', 'jsonlite', 'rvest')
 # remotes::install_github("bergant/airtabler")
+# devtools::install_github("r-lib/gargle")
 
 library(googlesheets4)
 library(airtabler)
@@ -25,7 +26,7 @@ source(".env")
 # run read_sheet command once interactively to auth each session 
 # and then you can run the rest of the code in one go, 
 data <- read_sheet(gsheet_env)
-
+1
 
 # __          __       _____  _______ #
 # \ \        / //\    |_   _||__   __|#
@@ -33,7 +34,7 @@ data <- read_sheet(gsheet_env)
 # 	\ \/  \/ // /\ \    | |     | |   #
 # 	 \  /\  // ____ \  _| |_    | |   #
 #     \/  \//_/    \_\|_____|   |_|   #
-	
+
 
 
 #   ____________________________________________________________________________
@@ -58,7 +59,7 @@ data <- data %>% select(
 	does_the_notification_have_to_be_in_writing = 
 		starts_with("does_the_notification_have_to_be_in_writing_debe_ser_la_notificacion_por_escrito"),
 	do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent = 
-	starts_with("do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent_deben_los_inquilinos_proveer_alguna_documentacion_para_su_proteccion_por_ejemplo_justificar_que_no_pueden_pagar_la_renta"),
+		starts_with("do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent_deben_los_inquilinos_proveer_alguna_documentacion_para_su_proteccion_por_ejemplo_justificar_que_no_pueden_pagar_la_renta"),
 	when_do_tenants_have_to_provide_documentation = 
 		starts_with("when_do_tenants_have_to_provide_documentation_cuando_es_que_los_inquilinos_tienen_que_proveer_documentacion"),
 	do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent = 
@@ -82,7 +83,7 @@ data <- data %>% select(
 	can_tenants_pay_some_or_all_of_their_rent_out_of_their_security_deposit = 
 		starts_with("can_tenants_pay_some_or_all_of_their_rent_out_of_their_security_deposit_pueden_los_inquilinos_pagar_parte_o_toda_la_renta_con_su_deposito_de_garantia"),
 	do_you_want_to_tell_us_about_eviction_protections = 
-	starts_with("do_you_want_to_tell_us_about_eviction_protections_nos_puedes_platicar_sobre_protecciones_contra_el_desalojo"),
+		starts_with("do_you_want_to_tell_us_about_eviction_protections_nos_puedes_platicar_sobre_protecciones_contra_el_desalojo"),
 	do_you_want_to_tell_us_about_an_rental_relief_protection =
 		starts_with("do_you_want_to_tell_us_about_an_rental_relief_protection_quiere_contarnos_sobre_subsidio_para_la_renta"),
 	do_you_want_to_tell_us_about_a_court_law_enforcement_policy_change =
@@ -101,9 +102,9 @@ data <- data %>% select(
 		starts_with("court_l_e_policy_end_date_explanation_explicacion_de_fecha_de_finalizacion_de_corte_cumplimiento_de_la_ley"),
 	can_landlords_evict_tenants_if_they_haven_t_completely_paid_the_missed_rent =
 		starts_with("can_landlords_evict_tenants_if_they_haven_t_completely_paid_the_missed_rent_by_the_end_of_the_repayment_period_pueden_los_propietarios_desalojar_a_los_inquilinos_si_no_han_pagado_la_renta_completa_antes_de_la_fecha_estipulada"), 
-	end_date_31 = end_date_fecha_de_finalizacion_jie_shu_ri_qi_31,
-	end_date_36 = end_date_fecha_de_finalizacion_jie_shu_ri_qi_36,
-	end_date_43 = end_date_fecha_de_finalizacion_jie_shu_ri_qi_43,
+	end_date_31 = end_date_fecha_de_finalizacion_jie_shu_ri_qi_33,
+	end_date_36 = end_date_fecha_de_finalizacion_jie_shu_ri_qi_37,
+	end_date_43 = end_date_fecha_de_finalizacion_jie_shu_ri_qi_44,
 	
 	everything()
 )
@@ -165,22 +166,64 @@ data$court_l_e_policy_end_date_explanation <- as.character(sapply( data$court_l_
 ### Q1 Policy Type - How Are Tenants Protected Against Eviction             ####
 
 data_fact <- data %>% select(how_are_tenants_protected_against_eviction )
-data_fact$protect <- stringr::str_replace_all(as.character(data_fact$how_are_tenants_protected_against_eviction), 
+
+# data_fact$protect <- as.character(data_fact$how_are_tenants_protected_against_eviction)
+
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$how_are_tenants_protected_against_eviction),
+																							stringr::coll(data_fact$how_are_tenants_protected_against_eviction[325]),
+																							"Moratorium")
+
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect),
+																							stringr::coll(data_fact$protect[326]),
+																							"Moratorium, Defense")
+
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect),
+																							stringr::coll(data_fact$protect[338]),
+																							"Moratorium")
+
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
 																							stringr::fixed("Moratorium (landlords are not allowed to serve notices to tenants)") ,
 																							"Moratorium")
+
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
+																							stringr::fixed("Moratorium (landlords are not allowed to serve notices to tenants) // Moratoria (los propietarios no pueden enviar orden de desalojo a los inquilinos) // 中止（禁止房主向租户送达通知）") ,
+																							"Moratorium")
+
 data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
 																							stringr::fixed("Moratorium // Moratoria (los propietarios no pueden enviar orden de desalojo a los inquilinos)") ,
 																							"Moratorium")
 
 
 data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
-																							stringr::fixed("Defense (tenants have a defense in court against eviction actions)") ,
-																							"Defense")
-data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
-																							stringr::fixed("Defense // Defensa (los inquilinos tienen el derecho a una defensa en la cortes contra acciones de desalojo)") ,
+																							stringr::fixed("Defense (tenants have a defense in court against eviction actions) // Defensa (los inquilinos tienen el derecho a una defensa en la cortes contra acciones de desalojo) // 辩护（承租人在法庭上有针对驱逐行为的辩护）") ,
 																							"Defense")
 
-data_fact$protect <- as.factor(data_fact$protect)
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
+																							stringr::coll("Defense // Defensa (los inquilinos tienen el derecho a una defensa en la cortes contra acciones de desalojo)") ,
+																							"Defense")
+
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
+																							stringr::fixed("Defense // 辩护（承租人在法庭上有针对驱逐行为的辩护）") ,
+																							"Defense")
+
+
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
+																							stringr::fixed("Defense (tenants have a defense in court against eviction actions)") ,
+																							"Defense")
+
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
+																							stringr::fixed("Moratorium // Moratoria (los propietarios no pueden enviar orden de desalojo a los inquilinos)") ,
+																							"Moratorium")
+
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
+																							stringr::coll("Defense // Defensa (los inquilinos tienen el derecho a una defensa en la cortes contra acciones de desalojo) // 辩护（承租人在法庭上有针对驱逐行为的辩护）") ,
+																							"Defense")
+
+data_fact$protect <- stringr::str_replace_all(as.character(data_fact$protect), 
+																							stringr::coll("Defense // Defensa (los inquilinos tienen el derecho a una defensa en la cortes contra acciones de desalojo)") ,
+																							"Defense")
+
+
 
 # tabulate and split google forms multiple selections
 data_fact_protect <- mtabulate(strsplit(as.character(data_fact$protect), "\\s*,\\s*"))
@@ -200,7 +243,7 @@ source(file = "./code_sourcing/code_factors.r")
 ##  rejoin and write out current data logs and factors                      ####
 
 data_tab <- bind_cols(data, data_fact_protect_rejoin, data_fact_evictions_rejoin) %>% 
-	select(-after_the_temporary_protection_ends_how_long_will_tenants_have_to_pay_the_rent_they_missed_during_the_emergency, -how_long	)
+	select(-after_the_temporary_protection_ends_how_long_will_tenants_have_to_pay_the_rent_they_missed_during_the_emergency, -how_long, -admin_court_date_expiration	)
 
 readr::write_csv(data_tab, paste("./data_log/data_aemp",lubridate::today(),"2.csv"))
 data_log <- data %>% select_if(is.factor)  %>% purrr::map(levels)
@@ -214,15 +257,15 @@ data_tab$state <- trimws(toupper(data_tab$what_u_s_state_or_territory_is_it_in))
 
 # uses correct municipality or state depending on what is blank or filled in
 data_tab$geo <- ifelse( stringr::fixed(as.character(data_tab$state)) == 
-	stringr::fixed(trimws(toupper(data_tab$where_does_this_protection_or_campaign_apply))),
-	data_tab$state,
-	paste(data_tab$where_does_this_protection_or_campaign_apply,  data_tab$state, sep = ", " ))
+													stringr::fixed(trimws(toupper(data_tab$where_does_this_protection_or_campaign_apply))),
+												data_tab$state,
+												paste(data_tab$where_does_this_protection_or_campaign_apply,  data_tab$state, sep = ", " ))
 
 data_tab <- data_tab %>% mutate(geo = gsub("Ã±", "ñ", geo))
 
 # read in previously geocoded data to reduce geocoding time
 # change to latest version (LATEST GEOCODE WRITE) when updating on write
-data_gc <- readr::read_csv("./geocode_log/geocodes_2020-07-05.csv") 
+data_gc <- readr::read_csv("./geocode_log/geocodes_2020-08-23.csv") 
 
 data_tab <- data_tab %>% left_join(data_gc, by = "geo")
 
@@ -232,13 +275,13 @@ data_tab_gc    <- data_tab %>% filter( !is.na(lat) )
 data_tab_to_gc <- data_tab %>% filter( is.na(lat) )
 
 if( nrow(data_tab_to_gc) != 0){
-	data_tab_to_gc <- data_tab_to_gc %>%  tidygeocoder::geocode(geo, method='cascade') 
+	data_tab_to_gc <- data_tab_to_gc %>%  select(-lat, -long) %>% tidygeocoder::geocode(geo, method='cascade') 
 	data_tab2 <- bind_rows( data_tab_gc, data_tab_to_gc )
 } else{
 	data_tab2 <- bind_rows(data_tab_gc )	
 }
 
-# LATEST GEOCODE WRITE run this every once in a while
+# LATEST GEOCODE WRITE run this every once in a while and update the date on data_gc read
 # readr::write_csv( (data_tab2 %>% select(geo, lat, long)), paste0("./geocode_log/geocodes_",lubridate::today(),'.csv'))
 
 
@@ -262,17 +305,17 @@ source("./code_sourcing/code_points.r")
 ### Creating Ranked Summary                                                 ####
 
 data_tab_out <- bind_cols(data_tab_nyu, data_points1 %>% 
-	select(pts_total), data_points2, data_points3, data_points4, 
-	data_points5, data_points6, data_points7, data_points8, data_points9, data_points10, data_points11)
+														select(pts_total), data_points2, data_points3, data_points4, 
+													data_points5, data_points6, data_points7, data_points8, data_points9, data_points10, data_points11)
 
 
 #   ____________________________________________________________________________
 #   Data Reconciliation                                                    ####
 
 data_tab_out$policy_type = case_when(stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_eviction_protections) %in% c("Yes", "Yes // Si") ~ "Legistlative Eviction Protection", 
-	stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_an_rental_relief_protection) %in% c("Yes", "Yes // Si") ~ "Rental Relief Policy",
-	stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_a_court_law_enforcement_policy_change) %in% c("Yes", "Yes // Si") ~ "Court-Based Eviction Policy",
-	TRUE ~ NA_character_)
+																		 stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_an_rental_relief_protection) %in% c("Yes", "Yes // Si") ~ "Rental Relief Policy",
+																		 stringr::fixed(data_tab_out$do_you_want_to_tell_us_about_a_court_law_enforcement_policy_change) %in% c("Yes", "Yes // Si") ~ "Court-Based Eviction Policy",
+																		 TRUE ~ NA_character_)
 
 # data_tab_out$
 # recode 
@@ -280,32 +323,41 @@ data_tab_out$policy_type = case_when(stringr::fixed(data_tab_out$do_you_want_to_
 
 
 data_export <- data_tab_out %>% select(municipality = geo, state, 
-	Country = is_it_in_the_united_states_or_a_u_s_territory, 
-	admin_scale = starts_with("what_scale_does_it_apply_to_alcance_o_nivel_administrativo"),
-	lat, lng = long, passed = is_this_an_active_organizing_campaign_or_a_tenant_protection_that_has_been_enacted, 
-	end_date_earliest = earliest_date_expiration, end_date_legist = end_date_31, end_date_rent_relief = end_date_36, end_date_court = end_date_43,
-	policy_summary = tenant_protection_policy_summary,
-	policy_type, link = link_to_source, resource = tenant_resources,
-	state_level_legal_status = current_status, state_level_legal_summary = state_summary, 
-	point_total = pts_total, starts_with("pts_"))
+																			 Country = is_it_in_the_united_states_or_a_u_s_territory, 
+																			 admin_scale = starts_with("what_scale_does_it_apply_to_alcance_o_nivel_administrativo"),
+																			 lat, lng = long, passed = is_this_an_active_organizing_campaign_or_a_tenant_protection_that_has_been_enacted, 
+																			 end_date_earliest = earliest_date_expiration, end_date_legist = end_date_31, end_date_rent_relief = end_date_36, end_date_court = end_date_43,
+																			 policy_summary = tenant_protection_policy_summary,
+																			 policy_type, link = link_to_source, resource = tenant_resources,
+																			 state_level_legal_status = current_status, state_level_legal_summary = state_summary, 
+																			 point_total = pts_total, starts_with("pts_"))
 
 data_export$municipality <- stringi::stri_trans_totitle(sapply(strsplit(data_export$municipality,","), `[`, 1))
 data_export$state <- stringi::stri_trans_totitle(data_export$state)
-data_export$Country <- ifelse( data_export$Country == "Yes", "United States", NA)
+# data_export$Country2 <- data_export$Country
+data_export$Country2 <- case_when( data_export$Country == "Yes" ~ "United States", 
+																	 data_export$Country == "Yes // Si // 是" ~ "United States", 
+																	 TRUE ~ NA_character_)
+data_export$Country <- data_export$Country2
+data_export$Country2 <- NULL
 data_export$ISO <- ifelse( data_export$Country == "United States", "USA", NA)
 data_export$admin_scale = forcats::fct_recode( data_export$admin_scale, 
-	"City" = "City // Ciudad",
-	"County" = "County // Condado" ,
-	"State" = "State // Estado",
-	"State" = "Territory" # sorry!
-	#Nation/ Country
-	)
+																							 "City" = "City // Ciudad",
+																							 "City" = "City // Ciudad // 城市",
+																							 "County" = "County // Condado" ,
+																							 "County" = "County // Condado // 县",
+																							 "State" = "State // Estado",
+																							 "State" = "State // Estado // 州",
+																							 "State" = "Territory" # sorry!
+																							 #Nation/ Country
+)
 data_export$passed <- as.character(forcats::fct_recode( data_export$passed, 
-	"FALSE" = "Active campaign",
-	"FALSE" = "Relief Fund",
-	"TRUE" =  "Existing tenant protection",
-	"TRUE" = "Existing tenant protection // Medida de proteccion existente"
-	))
+																												"FALSE" = "Active campaign",
+																												"FALSE" = "Relief Fund",
+																												"TRUE" =  "Existing tenant protection",
+																												"TRUE" = "Existing tenant protection // Medida de proteccion existente",
+																												"TRUE" = "Existing tenant protection // Medida de proteccion existente // 已存在的租户保护"
+))
 
 data_export$passed <- as.logical(data_export$passed)
 data_export$end_date_earliest <- as.character(data_export$end_date_earliest)
@@ -414,7 +466,8 @@ data_fl_out$state = "FLORIDA"
 data_fl_out$admin_scale <-  "County"
 data_fl_out$passed <- as.logical("TRUE")
 data_fl_out$policy_type <- "Eviction Protection"
-data_fl_out$resource <- "www.communityjusticeproject.com"
+data_fl_out$link <- data_fl_out$link_to_sources
+data_fl_out$resource <- data_fl_out$legal_aid
 data_fl_out$Country = "United States"
 data_fl_out$ISO = "USA"
 data_fl_out$end_date_earliest <- data_fl_out$end_date
@@ -453,22 +506,27 @@ data_export1$range <-  as.numeric(as.character(cut(data_export1$point_total, bre
 ##  International Data Input and Processing                                 ####
 # download international data from first entry sheet, rename and merge
 
+data_brzl <- readr::read_csv("http://reclus.mapacovid19.online/api/protlegis/csv")
+data_brzl <- janitor::clean_names(data_brzl)
+data_brzl <- data_brzl %>% select(Country = country, ISO = iso, end_date_earliest = end, everything())
+# recode policy numerics to types
+
 
 data_int <- read_sheet("https://docs.google.com/spreadsheets/d/1rvVllKDvzHtzSEphhrgFVMZRCbFCewfOfq3ccwPRa1c/edit#gid=608427658")
 data_int <- janitor::clean_names(data_int)
 data_int_s <- data_int %>% select(municipality, state, Country = country_5, ISO = iso, 
-	admin_scale = administrative_scale, range,
-	lng = longitude, lat = latitude, passed = has_the_legislation_been_passed, resource = resources,
-	policy_summary = policy_description, link = link, resource = resources, policy_type = type_of_policy,
-	-start_date, end_date_earliest = end_date, -other_feedback_17, -other_feedback_20, -timestamp, -email_address, 
-	-country_19)
+																	admin_scale = administrative_scale, range,
+																	lng = longitude, lat = latitude, resource = resource,
+																	policy_summary = policy_description, link = link, # policy_type = type_of_policy,
+																	-start_date, end_date_earliest = end_date, -other_feedback_17, -other_feedback_20, -timestamp, -email_address, 
+																	-country_19)
+
 data_int_s$end_date_earliest <- as.factor(sapply(data_int_s$end_date_earliest,function(x) ifelse(is.null(x),NA,x)))
-
-# data_int_s$end_date_earliest[11] <- NA
-# data_int_s$end_date_earliest[79] <- NA
 data_int_s$end_date_earliest <- as.numeric(as.character(data_int_s$end_date_earliest))
+data_int_s$end_date_earliest <- as.character(lubridate::as_date(as.POSIXct(data_int_s$end_date_earliest, origin="1970-01-01",tz="GMT")))
+# data_int_s$end_date_earliest <- as.character(lubridate::as_date(anytime::anytime( data_int_s$end_date_earliest )))
+data_int_s$end_date <- data_int_s$end_date_earliest 
 
-data_int_s$end_date_earliest <- as.character(lubridate::as_date(anytime::anytime( data_int_s$end_date_earliest )))
 
 # gsubfn::gsubfn(data_int_s$municipality, list("á"="a", "é"="e", "ó"="o"), c("á","é","ó"))
 data_int_s <- data_int_s %>% mutate(
@@ -479,7 +537,7 @@ data_int_s <- data_int_s %>% mutate(
 	
 	state = gsub("Ã£", "ã", state),
 	state = gsub("Ã©", "é", state),
-
+	
 	policy_summary = gsub("Ã¡", "á", policy_summary),
 	policy_summary = gsub("Ã£", "ã", policy_summary), #"MaranhÃ£o", "Maranhão
 	policy_summary = gsub("Ã©", "é", policy_summary), 
@@ -489,30 +547,35 @@ data_int_s <- data_int_s %>% mutate(
 	policy_summary = gsub("nÂ°11", "n°11",policy_summary))
 
 data_int_filter <- data_int_s %>% filter(ISO != "USA" | (ISO == "USA" & admin_scale == "Country"))
-data_int_filter$passed <- as.logical(sapply( data_int_filter$passed, function(x) ifelse(is.null(x),NA,x)))
-# data_int_filter$passed <- as.logical(data_int_filter$passed)
+# data_int_filter$passed <- as.logical(sapply( data_int_filter$passed, function(x) ifelse(is.null(x),NA,x)))
 
-data_int_filter$resource <- NULL ## currently empty so doesn't let a bind happen
+
+
+# data_int_filter$passed <- as.logical(data_int_filter$passed)
+# data_int_filter$resource <- NULL ## currently empty so doesn't let a bind happen
 
 
 ## geocode 
 data_int_rest <- data_int_filter %>% filter(admin_scale != "City")
 data_int_city <- data_int_filter %>% filter(admin_scale == "City", !is.na(lat) )
-data_int_city_to_gc <- data_int_filter %>% filter(admin_scale == "City", is.na(lat) )
+data_int_city_to_gc <- data_int_filter %>% filter(admin_scale == "City", is.na(lat) ) %>% select(-lng, -lat, everything())
+data_int_city_to_gc <- data_int_city_to_gc %>% select(-lng, -lat)
 
 if( nrow(data_int_city_to_gc) != 0){
 	data_int_city_to_gc$geo <- paste(data_int_city_to_gc$municipality, data_int_city_to_gc$Country)
-	data_int_city_to_gc <- data_int_city_to_gc %>%  
-		tidygeocoder::geocode(geo, method='cascade') %>% select( -geo, everything() )
+	data_int_city_to_gc <- data_int_city_to_gc %>%  tidygeocoder::geocode(geo, method='cascade') %>% select( -geo, lng = long,  everything() )
 	data_int_gc <- bind_rows(data_int_city_to_gc, data_int_city, data_int_rest)
-	} else{
-		data_int_gc <- bind_rows(data_int_city, data_int_rest)	
-	}
+} else{
+	data_int_gc <- bind_rows(data_int_city, data_int_rest)	
+}
+# data_int_gc <- data_int_gc %>% select(lng = long, everything())
+
+# data_int_gc_test <- bind_rows(data_int_gc, data_brzl)
 
 data_export_dom_int <- bind_rows( data_export1, data_int_gc )
 
 data_export_dom_int$has_expired_protections <- case_when( lubridate::today() >= lubridate::as_date(data_export_dom_int$end_date_earliest) ~ "TRUE",
-																												 lubridate::today() < lubridate::as_date(data_export_dom_int$end_date_earliest)~ "FALSE",
+																													lubridate::today() < lubridate::as_date(data_export_dom_int$end_date_earliest)~ "FALSE",
 																													is.na(data_export_dom_int$end_date_earliest)~ "FALSE",
 																													TRUE ~ "FALSE")
 
@@ -521,17 +584,31 @@ data_export_dom_int$end_date_legist      <- ( lubridate::with_tz( data_export_do
 data_export_dom_int$end_date_rent_relief <- ( lubridate::with_tz( data_export_dom_int$end_date_rent_relief, tzone = 'UTC'))
 data_export_dom_int$end_date_court       <- ( lubridate::with_tz( data_export_dom_int$end_date_court, tzone = 'UTC'))
 
+# has policy existed need to mix in state court protections, benfer dates with existing. 
+
+data_export_dom_int$bool_legist_exist <- case_when( !is.na(data_export_dom_int$end_date_earliest) ~ TRUE,
+																										TRUE ~ FALSE)
+
+data_export_dom_int$bool_rent_relief_exist <- case_when( !is.na(data_export_dom_int$end_date_rent_relief) ~ TRUE,
+																												 TRUE ~ FALSE)
+
+data_export_dom_int$bool_court_exist <- case_when( !is.na(data_export_dom_int$end_date_court) ~ TRUE,
+																									 TRUE ~ FALSE)
+
+
 data_export_dom_int <- data_export_dom_int %>% 
 	mutate_all(as.character) %>% replace(., is.na(.), "")
 
 
 #### repeat dual city / county jurisdictions ####
 data_export_dom_int <- bind_rows(data_export_dom_int, 
-	(data_export_dom_int %>% filter(municipality == "San Francisco") %>%
-	mutate(admin_scale = "County")))
+																 (data_export_dom_int %>% filter(municipality == "San Francisco") %>%
+																  	mutate(admin_scale = "County")))
 
 # super quick sanity check (max ~35, min negative 12)
 # summary(as.numeric(data_export_dom_int$point_total))
+# data_export_dom_int <- data_export_dom_int %>% select(-geo, -geo_method)
+
 
 #### write out 
 readr::write_excel_csv(data_export_dom_int, paste0("./data_out/data_scored",lubridate::today(),".csv"))
@@ -545,5 +622,8 @@ data_strike <- janitor::clean_names(data_strike)
 
 data_strike <- data_strike %>% 
 	mutate_all(as.character) %>% replace(., is.na(.), "")
+
+brazil_strike <- readr::read_csv("https://reclus.mapacovid19.online/api/hausjustice/csv")
+brazil_strike <- brazil_strike %>% select(type = Strike_Type, strike_status = Strike_Status, date = Start, location = Location, latitude = Latitude, Longitude = Longitude, why = Why)
 
 readr::write_excel_csv(data_strike, paste0( dropbox_env, "covid-map\\emergency_housing_actions.csv"))
