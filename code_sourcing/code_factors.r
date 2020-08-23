@@ -18,8 +18,15 @@ data_fact2$eviction_types <- stringr::str_replace_all(as.character(data_fact2$ev
 																											"no_fault")
 
 # nonpayment 
+
 data_fact2$eviction_types <- stringr::str_replace_all(as.character(data_fact2$eviction_types), 
-																											stringr::fixed("nonpayment // Desalojos por falta de pago de renta a causa de COVID-19"), 
+																											stringr::coll("nonpayment // Desalojos por falta de pago de renta a causa de COVID-19 // 与COVID-19相关的亏欠租金的驱逐"), 
+																											"nonpayment")
+
+
+
+data_fact2$eviction_types <- stringr::str_replace_all(as.character(data_fact2$eviction_types), 
+																											stringr::coll("nonpayment // Desalojos por falta de pago de renta a causa de COVID-19"), 
 																											"nonpayment")
 
 
@@ -75,6 +82,26 @@ data_fact2$eviction_types <- stringr::str_replace_all(as.character(data_fact2$ev
 data_fact2$eviction_types <- stringr::str_replace_all(as.character(data_fact2$eviction_types), 
 																											stringr::fixed("Except when the tenant poses an imminent threat to the health or safety of other occupants of the property, and such threat is stated in the notice as the grounds for the eviction") ,
 																											"except_health_safety")
+
+
+# combos / chinese / hard codes
+
+data_fact2$eviction_types <- stringr::str_replace_all(as.character(data_fact2$eviction_types), 
+																											stringr::coll(data_fact2$eviction_types[326]) ,
+																											"no_fault, nonpayment")
+
+data_fact2$eviction_types <- stringr::str_replace_all(as.character(data_fact2$eviction_types), 
+																											stringr::coll("nonpayment // Desalojos por falta de pago de renta a causa de COVID-19"), 
+																											"nonpayment")
+
+# data_fact2$eviction_types <- stringr::str_replace_all(as.character(data_fact2$eviction_types), 
+# 																											stringr::coll(data_fact2$eviction_types[327]) ,
+# 																											"no_fault, nonpayment")
+
+data_fact2$eviction_types <- stringr::str_replace_all(as.character(data_fact2$eviction_types), 
+																											stringr::coll(data_fact2$eviction_types[327]) ,
+																											"nonpayment")
+
 
 
 data_fact_evictions <- mtabulate(strsplit(as.character(data_fact2$eviction_types), "\\s*,\\s*"))

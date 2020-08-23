@@ -80,19 +80,20 @@ data_tab1 <- data_tab1 %>% 	mutate(
 						"Within 14 days of receipt of written notice from the landlord of the existence of the City’s ordinance, unless the totality of the circumstances warrant a longer reasonable period of time.",
 						"Within 14 days of receipt of written notice from the landlord of the existence of the Cityâ€™s ordinance, unless the totality of the circumstances warrant a longer reasonable period of time." , 
 						"14 days after landlord issues a written notice of amount of rent due."  , 
-						"Within 30 days after rent is due" , 
+						"Within 30 days after rent is due" ,  "Within 30 days after rent is due // 30 días después del vencimiento de la renta // 租金到期后30天内",
 						"Before the expiration of a 3-day notice issued by the landlord for nonpayment of rent" , 
 						"Before the Notice of Termination (for non-payment of rent) expires" ) ~ 0, 
 				
 					how_much_time_do_tenants_have_to_notify_their_landlords %in% 
-					c("Before the day the rent is due.", "On or before the day rent is due // Antes o el día de vencimiento de la renta",
+					c("Before the day the rent is due.", 
+						"On or before the day rent is due // Antes o el día de vencimiento de la renta",
 						"On or before the day rent is due",
 						"Within 5 days after rent is due" ) ~ -1,
 				TRUE ~ 0 ))
 
 data_tab1 <- data_tab1 %>% 	mutate(		
 	pt_4_3_tenant_do = case_when( do_tenants_have_to_provide_documentation_of_their_need_for_the_protection_e_g_that_they_cant_afford_to_pay_rent %in% 
-				c("Yes", "Yes // Si",
+				c("Yes", "Yes // Si", "Yes // Si // 是",
 					"Yes, but a signed self-certification is acceptable if necessary") ~ -3, 
 					TRUE ~ 0 ),
 	pt_4_4_tenant_do = case_when( when_do_tenants_have_to_provide_documentation %in% 
@@ -100,6 +101,7 @@ data_tab1 <- data_tab1 %>% 	mutate(
 					"After notifying the landlord",
 					"When they notify their landlord", 
 					"When they notify their landlord // Cuando ellos le notifiquen a los propietarios" ,
+					"When they notify their landlord // Cuando ellos le notifiquen a los propietarios / 当他们通知房主时",
 					"When they repay their missed rent" ,
 					"3 days after",
 					"Within three business days of receiving a required notice of rent delinquency from the landlord.",
@@ -159,7 +161,8 @@ data_tab1 <- data_tab1 %>%
 
 data_tab1 <- data_tab1 %>% 
 	mutate(	
-		pt_6_1_how_long = case_when( how_long1 %in% c( 'Tenants never have to pay back rent' )~ 5, 
+		pt_6_1_how_long = case_when( how_long1 %in% c( 'Tenants never have to pay back rent', 
+																									 "Tenants never have to pay back rent // Los inquilinos no tienen que pagar la renta que no han pagado // 租户无需偿还房租" )~ 5, 
 									TRUE ~ 0),
 		pt_6_2_how_long = case_when( how_long1 %in% c('One year' , '12 months', 'One year') ~ 0, TRUE ~ 0),
 		pt_6_3_how_long = case_when( how_long1 %in% c(
@@ -193,7 +196,8 @@ data_tab1 <- data_tab1 %>%
 			"Within six (6) months after expiration of local emergency",
 			'within six months after the emergency order expires' , 
 			'Within six months after the emergency order expires', 
-			'Within six months following the expiration of the emergency period') 
+			'Within six months following the expiration of the emergency period',
+			"Tenants have 6 months to re-pay rent after emergency is lifted") 
 			~ -1, TRUE ~ 0))
 
 data_tab1 <- data_tab1 %>% 
@@ -226,7 +230,8 @@ data_tab1 <- data_tab1 %>%
 data_tab1 <- data_tab1 %>% 
 		mutate(
 			pt_8_1_fees= case_when(  can_landlords_charge_late_fees_or_interest_on_missed_rent_payments %in% c( "No, they can't charge late fees or interest",
-																																																					"No, they can't charge late fees or interest // No, ellos no pueden cobrar cargo por retraso ni interés"	)  ~ 3,  
+																																																					"No, they can't charge late fees or interest // No, ellos no pueden cobrar cargo por retraso ni interés",
+																																																					"No, they can't charge late fees or interest // No, ellos no pueden cobrar cargo por retraso ni interés // 不, 房主不可以收取滞纳金和利息")  ~ 3,  
 															 can_landlords_charge_late_fees_or_interest_on_missed_rent_payments %in% c('Yes, they can charge interest') ~ -1,
 								can_landlords_charge_late_fees_or_interest_on_missed_rent_payments %in% c('Yes, they can charge late fees') ~ -2,
 								can_landlords_charge_late_fees_or_interest_on_missed_rent_payments %in% c('Yes, they can charge late fees and interest' ) ~ -3, 
@@ -278,6 +283,7 @@ data_tab1 <- data_tab1 %>%
 	mutate(
 	pt_10_01_court = case_when( are_courts_holding_eviction_proceedings %in% 
 																c("Yes, courts have limited proceedings but may still allow evictions",
+																	"Yes, courts have limited proceedings but may still allow evictions // 是的，法院的诉讼程序有限，但仍可以驱逐",
 																	"Yes, courts have limited proceedings but may still allow evictions. Landlords are required to file a verification form along with any eviction complaint for nonpayment of rent filed before July 25, 2020. The verification form must say whether the tenant’s home is exempt from the eviction protection created by the CARES Act.",
 																	"There was a suspension of cases through May 17. May have resumed."   ) ~  -2,
 						 remote_hearings_allowed_in_non_emergency_civil_cases %in% c("Y") ~ -2, 
@@ -285,6 +291,7 @@ data_tab1 <- data_tab1 %>%
 		pt_10_02_court = case_when( are_courts_holding_eviction_proceedings %in% 
 						 	c("No, courts specifically suspended eviction proceedings" , 
 								"No, courts suspended non-emergency civil proceedings",
+								"No, courts suspended non-emergency civil proceedings // No, las cortes suspendieron los procedimientos que no son de emergencia // 否，法院暂停了非紧急民事诉讼",
 								"No") ~  3, 
 						 x3_suspends_hearings_on_eviction %in% c("Y") ~ 3 ,
 						 TRUE ~ 0))
@@ -343,7 +350,8 @@ data_tab1 <- data_tab1 %>%
 data_tab1 <- data_tab1 %>% 
 	mutate(		pt_11_4_renter_prot = case_when( can_landlords_charge_late_fees_or_interest_on_missed_rent_payments %in% 
 					c("No, they can't charge late fees or interest",
-						"No, they can't charge late fees or interest // No, ellos no pueden cobrar cargo por retraso ni interés") ~  1,
+						"No, they can't charge late fees or interest // No, ellos no pueden cobrar cargo por retraso ni interés",
+						"No, they can't charge late fees or interest // No, ellos no pueden cobrar cargo por retraso ni interés // 不, 房主不可以收取滞纳金和利息") ~  1,
 						prohibits_issuance_of_late_fees_to_landlord %in% c('Y') ~ 1,
 						TRUE ~ 0))
 
